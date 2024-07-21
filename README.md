@@ -1,0 +1,1 @@
+# install-sentry-kubernetes-minimum
