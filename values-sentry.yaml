@@ -1,0 +1,133 @@
+asHook: false
+user:
+  password: "sentry-admin-password"
+  create: true
+  email: admin@sentry.apatsev.org.ru
+system:
+  url: "http://sentry.apatsev.org.ru"
+mail: {}
+config:
+  snubaSettingsPy: |
+    TOPIC_PARTITION_COUNTS = {
+      "cdc": 1,
+      "event-replacements": 1,
+      "events-subscription-results": 1,
+      "events": 1,
+      "generic-events": 1,
+      "generic-metrics-subscription-results": 1,
+      "group-attributes": 1,
+      "ingest-attachments": 1,
+      "ingest-events": 1,
+      "ingest-metrics": 1,
+      "ingest-monitors": 1,
+      "ingest-occurrences": 1,
+      "ingest-performance-metrics": 1,
+      "ingest-replay-events": 1,
+      "ingest-replay-recordings": 1,
+      "ingest-sessions": 1,
+      "ingest-transactions": 1,
+      "metrics-subscription-results": 1,
+      "outcomes": 1,
+      "outcomes-billing": 1,
+      "processed-profiles": 1,
+      "profiles-call-tree": 1,
+      "profiles": 1,
+      "scheduled-subscriptions-events": 1,
+      "scheduled-subscriptions-generic-metrics-counters": 1,
+      "scheduled-subscriptions-generic-metrics-distributions": 1,
+      "scheduled-subscriptions-generic-metrics-sets": 1,
+      "scheduled-subscriptions-metrics": 1,
+      "scheduled-subscriptions-sessions": 1,
+      "scheduled-subscriptions-transactions": 1,
+      "sessions-subscription-results": 1,
+      "shared-resources-usage": 1,
+      "snuba-attribution": 1,
+      "snuba-commit-log": 1,
+      "snuba-dead-letter-generic-events": 1,
+      "snuba-dead-letter-generic-metrics": 1,
+      "snuba-dead-letter-group-attributes": 1,
+      "snuba-dead-letter-metrics-counters": 1,
+      "snuba-dead-letter-metrics-distributions": 1,
+      "snuba-dead-letter-metrics-sets": 1,
+      "snuba-dead-letter-metrics": 1,
+      "snuba-dead-letter-querylog": 1,
+      "snuba-dead-letter-replays": 1,
+      "snuba-dead-letter-sessions": 1,
+      "snuba-generic-events-commit-log": 1,
+      "snuba-generic-metrics-counters-commit-log": 1,
+      "snuba-generic-metrics-distributions-commit-log": 1,
+      "snuba-generic-metrics-sets-commit-log": 1,
+      "snuba-generic-metrics": 1,
+      "snuba-metrics-commit-log": 1,
+      "snuba-metrics-summaries": 1,
+      "snuba-metrics": 1,
+      "snuba-queries": 1,
+      "snuba-sessions-commit-log": 1,
+      "snuba-spans": 1,
+      "snuba-transactions-commit-log": 1,
+      "transactions-subscription-results": 1,
+      "transactions": 1
+    }
+nginx:
+  enabled: false
+ingress:
+  enabled: true
+  hostname: sentry.apatsev.org.ru
+  ingressClassName: "nginx"
+  regexPathStyle: nginx
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: 200m
+    # https://github.com/getsentry/self-hosted/issues/1927
+    nginx.ingress.kubernetes.io/proxy-buffers-number: "16"
+    nginx.ingress.kubernetes.io/proxy-buffer-size: "32k"
+filestore:
+  backend: "s3"
+  s3:
+    accessKey: "accessKey"
+    secretKey: "secretKey"
+    region_name: ru-central1
+    bucketName: sentry-bucket-apatsev-dev
+    endpointUrl: "https://storage.yandexcloud.net"
+    location: "debug-files" # https://docs.sentry.io/platforms/android/data-management/debug-files/
+postgresql:
+  enabled: false
+externalPostgresql:
+  password: sentry-postgresql-password
+  host: "c-id.rw.mdb.yandexcloud.net"
+  port: 6432
+  username: sentry
+  database: sentry
+rabbitmq:
+  ## If disabled, Redis will be used instead as the broker.
+  enabled: false
+redis:
+  enabled: false
+externalRedis:
+  password: sentry-redis-password
+  host: "c-id.rw.mdb.yandexcloud.net"
+  port: 6379
+externalKafka:
+  - host: sentry-kafka-dual-roles-node-0.sentry-kafka-kafka-brokers.sentry.svc.cluster.local
+    port: 9092
+kafka:
+  enabled: false
+zookeeper:
+  enabled: false
+clickhouse:
+  enabled: false
+externalClickhouse:
+  password: sentry-clickhouse-password
+  host: ch-sentry-clickhouse.sentry.svc
+  database: default
+  httpPort: 8123
+  clusterName: sentry
+  tcpPort: 9000
+  username: sentry
+  singleNode: true
+symbolicator:
+  enabled: true # service for native stacktraces
+hooks:
+  activeDeadlineSeconds: 600 # Если не указывать, будет ошибка sentry-snuba-migrate failed: DeadlineExceeded
+  snubaInit:
+    kafka:
+      enabled: false

@@ -1,0 +1,45 @@
+project: "zookeeper"
+version: 0.38.0
+
+registries:
+  - host: registry-1.docker.io
+
+repositories:
+  - name: altinity-clickhouse-operator
+    url: https://docs.altinity.com/clickhouse-operator/
+  - name: strimzi
+    url: https://strimzi.io/charts/
+  - name: sentry
+    url: https://sentry-kubernetes.github.io/charts
+
+releases:
+  - name: altinity-clickhouse-operator
+    namespace: kube-system
+    timeout: 5m
+    max_history: 3
+    chart: altinity-clickhouse-operator/altinity-clickhouse-operator
+
+  - name: zookeeper
+    namespace: zookeeper
+    create_namespace: true
+    atomic: true
+    wait: true
+    timeout: 5m
+    max_history: 3
+    chart:
+      name: oci://registry-1.docker.io/bitnamicharts/zookeeper
+      version: 10.2.5
+    values:
+      - values-zookeeper.yaml
+
+  - name: strimzi
+    namespace: strimzi-kafka-operator
+    create_namespace: true
+    atomic: true
+    wait: true
+    timeout: 5m
+    max_history: 3
+    chart: strimzi/strimzi-kafka-operator
+    version: 0.41.0
+    values:
+      - values-strimzi-kafka-operator.yaml

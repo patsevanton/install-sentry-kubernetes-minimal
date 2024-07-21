@@ -1,0 +1,59 @@
+---
+apiVersion: clickhouse.altinity.com/v1
+kind: ClickHouseInstallation
+metadata:
+  name: sentry-clickhouse
+  namespace: sentry
+spec:
+  defaults:
+    templates:
+      dataVolumeClaimTemplate: default # Описан ниже
+      podTemplate: clickhouse # Описан ниже
+      serviceTemplate: internal # Описан ниже
+  configuration:
+    settings:
+      logger/level: error
+    users:
+      sentry/profile: default
+      sentry/networks/ip:
+        - "127.0.0.1"
+        - "10.0.0.0/8"
+      sentry/password_sha256_hex: "8afd9a754e80697b2b8d863116351019d27bf9e6f819414b2fd63432a55cd41f"  # Хеш пароля "sentry-clickhouse-password"
+      sentry/quota: default
+    zookeeper:
+      nodes:
+        - host: zookeeper.zookeeper.svc.cluster.local
+          port: 2181
+    clusters:
+      - name: sentry  # Имя кластера: chi-sentry-sentry-<x>-<x>-<x>
+        secret:
+          auto: "True"  # Автоматическое управление секретами
+        layout:
+          shardsCount: 1  # Количество шардов в кластере
+  templates:
+    serviceTemplates:
+      - name: internal
+        generateName: "ch-{chi}"  # Генерируемое имя сервиса
+        spec:
+          ports:
+            - name: http
+              port: 8123
+            - name: tcp
+              port: 9000
+          type: ClusterIP
+    volumeClaimTemplates:
+      - name: default
+        reclaimPolicy: Retain  # Политика восстановления: сохранение данных после удаления
+        spec:
+          storageClassName: yc-network-ssd
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 30Gi
+    podTemplates:
+      - name: clickhouse
+        spec:
+          containers:
+            - name: clickhouse
+              image: clickhouse/clickhouse-server:23.3.8.21

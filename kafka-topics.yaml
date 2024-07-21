@@ -1,0 +1,628 @@
+# Судя по этому issue https://github.com/sentry-kubernetes/charts/issues/901
+# sentry во внешней kafka не создает topic.
+# Поэтому создаем их самостоятельно.
+# Конфигурации взяты из https://github.com/sentry-kubernetes/charts/blob/develop/charts/sentry/values.yaml#L1809
+# 10 partitions про запас.
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: sentry-kafka
+  name: events
+  namespace: sentry
+spec:
+  partitions: 1
+  config:
+    "message.timestamp.type": LogAppendTime
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: sentry-kafka
+  name: event-replacements
+  namespace: sentry
+spec:
+  partitions: 1
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: sentry-kafka
+  name: snuba-commit-log
+  namespace: sentry
+spec:
+  partitions: 1
+  config:
+    "cleanup.policy": "compact,delete"
+    "min.compaction.lag.ms": "3600000"
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: sentry-kafka
+  name: cdc
+  namespace: sentry
+spec:
+  partitions: 1
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: sentry-kafka
+  name: transactions
+  namespace: sentry
+spec:
+  partitions: 1
+  config:
+    "message.timestamp.type": LogAppendTime
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: sentry-kafka
+  name: snuba-transactions-commit-log
+  namespace: sentry
+spec:
+  partitions: 1
+  config:
+    "cleanup.policy": "compact,delete"
+    "min.compaction.lag.ms": "3600000"
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: sentry-kafka
+  name: snuba-metrics
+  namespace: sentry
+spec:
+  partitions: 1
+  config:
+    "message.timestamp.type": LogAppendTime
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: sentry-kafka
+  name: outcomes
+  namespace: sentry
+spec:
+  partitions: 1
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: sentry-kafka
+  name: outcomes-billing
+  namespace: sentry
+spec:
+  partitions: 1
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: sentry-kafka
+  name: ingest-sessions
+  namespace: sentry
+spec:
+  partitions: 1
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: sentry-kafka
+  name: snuba-sessions-commit-log
+  namespace: sentry
+spec:
+  partitions: 1
+  config:
+    "cleanup.policy": "compact,delete"
+    "min.compaction.lag.ms": "3600000"
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: sentry-kafka
+  name: snuba-metrics-commit-log
+  namespace: sentry
+spec:
+  partitions: 1
+  config:
+    "cleanup.policy": "compact,delete"
+    "min.compaction.lag.ms": "3600000"
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: sentry-kafka
+  name: scheduled-subscriptions-events
+  namespace: sentry
+spec:
+  partitions: 1
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: sentry-kafka
+  name: scheduled-subscriptions-transactions
+  namespace: sentry
+spec:
+  partitions: 1
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: sentry-kafka
+  name: scheduled-subscriptions-sessions
+  namespace: sentry
+spec:
+  partitions: 1
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: sentry-kafka
+  name: scheduled-subscriptions-metrics
+  namespace: sentry
+spec:
+  partitions: 1
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: sentry-kafka
+  name: scheduled-subscriptions-generic-metrics-sets
+  namespace: sentry
+spec:
+  partitions: 1
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: sentry-kafka
+  name: scheduled-subscriptions-generic-metrics-distributions
+  namespace: sentry
+spec:
+  partitions: 1
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: sentry-kafka
+  name: scheduled-subscriptions-generic-metrics-counters
+  namespace: sentry
+spec:
+  partitions: 1
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: sentry-kafka
+  name: events-subscription-results
+  namespace: sentry
+spec:
+  partitions: 1
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: sentry-kafka
+  name: transactions-subscription-results
+  namespace: sentry
+spec:
+  partitions: 1
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: sentry-kafka
+  name: sessions-subscription-results
+  namespace: sentry
+spec:
+  partitions: 1
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: sentry-kafka
+  name: metrics-subscription-results
+  namespace: sentry
+spec:
+  partitions: 1
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: sentry-kafka
+  name: generic-metrics-subscription-results
+  namespace: sentry
+spec:
+  partitions: 1
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: sentry-kafka
+  name: snuba-queries
+  namespace: sentry
+spec:
+  partitions: 1
+  config:
+    "message.timestamp.type": LogAppendTime
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: sentry-kafka
+  name: processed-profiles
+  namespace: sentry
+spec:
+  partitions: 1
+  config:
+    "message.timestamp.type": LogAppendTime
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: sentry-kafka
+  name: profiles-call-tree
+  namespace: sentry
+spec:
+  partitions: 1
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: sentry-kafka
+  name: ingest-replay-events
+  namespace: sentry
+spec:
+  partitions: 1
+  config:
+    "message.timestamp.type": LogAppendTime
+    "max.message.bytes": "15000000"
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: sentry-kafka
+  name: snuba-generic-metrics
+  namespace: sentry
+spec:
+  partitions: 1
+  config:
+    "message.timestamp.type": LogAppendTime
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: sentry-kafka
+  name: snuba-generic-metrics-sets-commit-log
+  namespace: sentry
+spec:
+  partitions: 1
+  config:
+    "cleanup.policy": "compact,delete"
+    "min.compaction.lag.ms": "3600000"
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: sentry-kafka
+  name: snuba-generic-metrics-distributions-commit-log
+  namespace: sentry
+spec:
+  partitions: 1
+  config:
+    "cleanup.policy": "compact,delete"
+    "min.compaction.lag.ms": "3600000"
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: sentry-kafka
+  name: snuba-generic-metrics-counters-commit-log
+  namespace: sentry
+spec:
+  partitions: 1
+  config:
+    "cleanup.policy": "compact,delete"
+    "min.compaction.lag.ms": "3600000"
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: sentry-kafka
+  name: generic-events
+  namespace: sentry
+spec:
+  partitions: 1
+  config:
+    "message.timestamp.type": LogAppendTime
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: sentry-kafka
+  name: snuba-generic-events-commit-log
+  namespace: sentry
+spec:
+  partitions: 1
+  config:
+    "cleanup.policy": "compact,delete"
+    "min.compaction.lag.ms": "3600000"
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: sentry-kafka
+  name: group-attributes
+  namespace: sentry
+spec:
+  partitions: 1
+  config:
+    "message.timestamp.type": LogAppendTime
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: sentry-kafka
+  name: snuba-attribution
+  namespace: sentry
+spec:
+  partitions: 1
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: sentry-kafka
+  name: snuba-dead-letter-metrics
+  namespace: sentry
+spec:
+  partitions: 1
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: sentry-kafka
+  name: snuba-dead-letter-metrics-sets
+  namespace: sentry
+spec:
+  partitions: 1
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: sentry-kafka
+  name: snuba-dead-letter-metrics-counters
+  namespace: sentry
+spec:
+  partitions: 1
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: sentry-kafka
+  name: snuba-dead-letter-metrics-distributions
+  namespace: sentry
+spec:
+  partitions: 1
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: sentry-kafka
+  name: snuba-dead-letter-sessions
+  namespace: sentry
+spec:
+  partitions: 1
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: sentry-kafka
+  name: snuba-dead-letter-generic-metrics
+  namespace: sentry
+spec:
+  partitions: 1
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: sentry-kafka
+  name: snuba-dead-letter-replays
+  namespace: sentry
+spec:
+  partitions: 1
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: sentry-kafka
+  name: snuba-dead-letter-generic-events
+  namespace: sentry
+spec:
+  partitions: 1
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: sentry-kafka
+  name: snuba-dead-letter-querylog
+  namespace: sentry
+spec:
+  partitions: 1
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: sentry-kafka
+  name: snuba-dead-letter-group-attributes
+  namespace: sentry
+spec:
+  partitions: 1
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: sentry-kafka
+  name: ingest-attachments
+  namespace: sentry
+spec:
+  partitions: 1
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: sentry-kafka
+  name: ingest-transactions
+  namespace: sentry
+spec:
+  partitions: 1
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: sentry-kafka
+  name: ingest-events
+  namespace: sentry
+spec:
+  partitions: 1
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: sentry-kafka
+  name: ingest-replay-recordings
+  namespace: sentry
+spec:
+  partitions: 1
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: sentry-kafka
+  name: ingest-metrics
+  namespace: sentry
+spec:
+  partitions: 1
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: sentry-kafka
+  name: ingest-performance-metrics
+  namespace: sentry
+spec:
+  partitions: 1
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: sentry-kafka
+  name: ingest-monitors
+  namespace: sentry
+spec:
+  partitions: 1
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: sentry-kafka
+  name: profiles
+  namespace: sentry
+spec:
+  partitions: 1
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: sentry-kafka
+  name: ingest-occurrences
+  namespace: sentry
+spec:
+  partitions: 1
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: sentry-kafka
+  name: snuba-spans
+  namespace: sentry
+spec:
+  partitions: 1
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: sentry-kafka
+  name: shared-resources-usage
+  namespace: sentry
+spec:
+  partitions: 1
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: sentry-kafka
+  name: snuba-metrics-summaries
+  namespace: sentry
+spec:
+  partitions: 1
