@@ -1,4 +1,4 @@
-**Как установить sentry в kubernetes, отловить exception на бекенде, в браузере, на android**
+**Установка sentry в kubernetes, отловы exception на бекенде, в браузере, на android**
 
 В статье рассматривается Sentry — инструмент для сбора exception, который помогает разработчикам быстро обнаруживать и устранять проблемы, сокращая время выхода новых релизов и повышая удовлетворенность пользователей.
 
@@ -431,5 +431,7 @@ make all
 Затем нажимаем на List App и нажимаем на разные кнопки получая разные Exception.s
 
 ![](exception_from_android.png)
+
+Исходный код можно скачать в репозитории https://github.com/patsevanton/install-sentry-kubernetes-minimal
 
 Telegram чат по Sentry https://t.me/sentry_ru
